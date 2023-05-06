@@ -58,7 +58,6 @@ typings/
 .env
 
 # Ignore dist folder with webpack build output
-dist/
 
 .DS_Store
 
