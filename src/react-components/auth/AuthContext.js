@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import configs from "../../utils/configs";
+import { loginMember, loginSeller, findStore } from "../../api/bindUrl";
 
 // TODO: We really shouldn't include these dependencies on every page. A dynamic import would work better.
 import jwtDecode from "jwt-decode";
@@ -58,7 +59,11 @@ export function StorybookAuthContextProvider({ children }) {
     userId: "00000000",
     signIn: noop,
     verify: noop,
-    signOut: noop
+    signOut: noop,
+    bindMember: noop,
+    bindSeller: noop,
+    bindStore: noop,
+    cancelBind: noop
   });
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>;
 }
@@ -69,6 +74,69 @@ StorybookAuthContextProvider.propTypes = {
 };
 
 export function AuthContextProvider({ children, store }) {
+  const bindMember = useCallback(
+    async (email, password) => {
+      const response = await loginMember({account: email, password});
+      if (response.success) {
+        const { id, firstname, lastname, avatar, token } = response.data;
+        store.update({ userinfo: { 
+          memberid: id, firstname, lastname, avatar, token 
+        } })
+        return Promise.resolve();
+      } else {
+        store.clearUserInfo();
+        return Promise.reject(response.message);
+      }
+    },
+    [store]
+  );
+
+  const bindSeller = useCallback(
+    async (email, password) => {
+      const response = await loginSeller({account: email, password});
+      if (response.success) {
+        const { id, firstname, lastname, avatar, token, stores } = response.data;
+        store.update({ userinfo: { 
+          memberid: id, firstname, lastname, avatar, token 
+        } })
+        if (stores && stores.length > 0) {
+          return Promise.resolve(stores);
+        } else {
+          return Promise.reject("No Store");
+        }
+      } else {
+        store.clearUserInfo();
+        return Promise.reject(response.message);
+      }
+    },
+    [store]
+  );
+
+  const bindStore = useCallback(
+    async (storeId) => {
+      const response = await findStore({param: storeId});
+      if (response.success) {
+        store.update({ userinfo: {
+          ...store.state.userinfo, 
+          storeid: storeId 
+        } })
+        return Promise.resolve();
+      } else {
+        store.clearUserInfo();
+        return Promise.reject(response.message);
+      }
+    },
+    [store]
+  );
+
+  const cancelBind = useCallback(
+    async () => {
+      store.clearUserInfo();
+      return Promise.resolve();
+    },
+    [store]
+  )
+
   const signIn = useCallback(
     async email => {
       const authChannel = new AuthChannel(store);
@@ -94,6 +162,7 @@ export function AuthContextProvider({ children, store }) {
   const signOut = useCallback(async () => {
     configs.setIsAdmin(false);
     store.update({ credentials: { token: null, email: null } });
+    store.clearUserInfo();
     await store.resetToRandomDefaultAvatar();
   }, [store]);
 
@@ -103,9 +172,14 @@ export function AuthContextProvider({ children, store }) {
     isAdmin: configs.isAdmin(),
     email: store.state.credentials && store.state.credentials.email,
     userId: store.credentialsAccountId,
+    userInfo: store.state.userinfo,
     signIn,
     verify,
-    signOut
+    signOut,
+    bindMember,
+    bindSeller,
+    bindStore,
+    cancelBind
   });
 
   // Trigger re-renders when the store updates

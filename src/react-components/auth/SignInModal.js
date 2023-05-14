@@ -1,14 +1,18 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { CloseButton } from "../input/CloseButton";
 import { Modal } from "../modal/Modal";
 import { FormattedMessage, useIntl, defineMessages } from "react-intl";
 import { CancelButton, NextButton, ContinueButton } from "../input/Button";
 import { TextInputField } from "../input/TextInputField";
+import { RadioInputField } from "../input/RadioInputField";
+import { RadioInputOption } from "../input/RadioInput";
+import { SelectInputField } from "../input/SelectInputField";
 import { Column } from "../layout/Column";
 import { LegalMessage } from "./LegalMessage";
 
 export const SignInStep = {
+  bind: "bind",
   submit: "submit",
   waitForVerification: "waitForVerification",
   complete: "complete"
@@ -77,7 +81,153 @@ export const SignInMessages = defineMessages({
   }
 });
 
-export function SubmitEmail({ onSubmitEmail, initialEmail, privacyUrl, termsUrl, message }) {
+export function BindUser({ 
+    onBindMember, onBindSeller, onBindStore, onBindCancel,
+    initialEmail, message, bindType, stores, privacyUrl, termsUrl }) {
+  const intl = useIntl();
+
+  const [email, setEmail] = useState(initialEmail);
+  const [password, setPassword] = useState("");
+  const [type, setType] = useState(bindType);
+  const [storeOptions, setStoreOptions] = useState([]);
+  const [storeId, setStoreId] = useState("");
+  const selectStore = (bindType === "1" && stores && stores.length > 0);
+
+  const onBindForm = useCallback(
+    e => {
+      e.preventDefault();
+      if (type === "0") {
+        onBindMember(email, password);
+      } else {
+        if (storeId) {
+          onBindStore(email, storeId);
+        } else {
+          onBindSeller(email, password);
+        }
+      }
+    },
+    [onBindMember, onBindSeller, onBindStore, email, password, type, storeId]
+  );
+
+  const onChangeEmail = useCallback(
+    e => {
+      setEmail(e.target.value);
+    },
+    [setEmail]
+  );
+
+  const onChangePassword = useCallback(
+    e => {
+      setPassword(e.target.value);
+    },
+    [setPassword]
+  );
+
+  const onChangeStore = useCallback(
+    value => {
+      setStoreId(value);
+    },
+    [setStoreId]
+  );
+
+  const onCancel = useCallback(
+    () => {
+      onBindCancel(email, type);
+    },
+    [onBindCancel]
+  );
+
+  useEffect(() => {
+    if (selectStore) {
+      let options = [];
+      stores.map(store => {
+        options.push({
+          value: store.id,
+          label: store.name
+        })
+      })
+      setStoreOptions([...options]);
+    }
+  }, [bindType, stores]);
+
+  return (
+    <Column center padding as="form" onSubmit={onBindForm}>
+      {
+        !selectStore ? (
+          <React.Fragment>
+            <p>Please Bind your account As</p>
+            <RadioInputField>
+              <RadioInputOption
+                name="bind_type"
+                value="0"
+                label="Student"
+                onChange={() => setType("0")}
+                checked={type === "0"}
+              />
+              <RadioInputOption
+                name="bind_type"
+                value="1"
+                label="Teacher"
+                onChange={() => setType("1")}
+                checked={type === "1"}
+              />
+            </RadioInputField>
+            <TextInputField
+              name="email"
+              type="email"
+              required
+              value={email}
+              onChange={onChangeEmail}
+              placeholder="example@example.com"
+            />
+            <TextInputField
+              name="password"
+              type="password"
+              required
+              value={password}
+              onChange={onChangePassword}
+              placeholder="your password"
+            />
+            <p>{message}</p>
+          </React.Fragment>
+        ) : (
+          storeOptions && storeOptions.length > 0 && <SelectInputField
+            options={storeOptions}
+            onChange={onChangeStore}
+          />
+        )
+      }
+      <p>
+        <small>
+          <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
+        </small>
+      </p>
+      {selectStore && <CancelButton preset="cancel" onClick={onCancel} />}
+      <NextButton type="submit" />
+    </Column>
+  );
+}
+
+BindUser.defaultProps = {
+  bindType: "0",
+  initialEmail: "",
+  message: ""
+};
+
+BindUser.propTypes = {
+  message: PropTypes.string,
+  bindType: PropTypes.string,
+  stores: PropTypes.array,
+  termsUrl: PropTypes.string,
+  privacyUrl: PropTypes.string,
+  initialEmail: PropTypes.string,
+  onBindMember: PropTypes.func.isRequired,
+  onBindSeller: PropTypes.func.isRequired,
+  onBindStore: PropTypes.func.isRequired,
+  onBindCancel: PropTypes.func.isRequired,
+};
+
+export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, bindType, privacyUrl, termsUrl, message }) {
   const intl = useIntl();
 
   const [email, setEmail] = useState(initialEmail);
@@ -95,6 +245,13 @@ export function SubmitEmail({ onSubmitEmail, initialEmail, privacyUrl, termsUrl,
       setEmail(e.target.value);
     },
     [setEmail]
+  );
+
+  const onCancelHub = useCallback(
+    () => {
+      onCancel(email, bindType);
+    },
+    [onCancel]
   );
 
   return (
@@ -119,6 +276,7 @@ export function SubmitEmail({ onSubmitEmail, initialEmail, privacyUrl, termsUrl,
           <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
         </small>
       </p>
+      <CancelButton preset="cancel" onClick={onCancelHub} />
       <NextButton type="submit" />
     </Column>
   );
@@ -133,7 +291,8 @@ SubmitEmail.propTypes = {
   termsUrl: PropTypes.string,
   privacyUrl: PropTypes.string,
   initialEmail: PropTypes.string,
-  onSubmitEmail: PropTypes.func.isRequired
+  onSubmitEmail: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired
 };
 
 export function WaitForVerification({ email, onCancel, showNewsletterSignup }) {

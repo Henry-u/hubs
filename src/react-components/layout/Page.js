@@ -18,6 +18,7 @@ export function Page({
   isAdmin,
   isSignedIn,
   email,
+  userInfo,
   onSignOut,
   hidePoweredBy,
   showWhatsNewLink,
@@ -48,6 +49,7 @@ export function Page({
         isAdmin={isAdmin}
         isSignedIn={isSignedIn}
         email={email}
+        userInfo={userInfo}
         onSignOut={onSignOut}
         isHmc={isHmc}
       />
@@ -92,6 +94,7 @@ Page.propTypes = {
   isAdmin: PropTypes.bool,
   isSignedIn: PropTypes.bool,
   email: PropTypes.string,
+  userInfo: PropTypes.object,
   onSignOut: PropTypes.func,
   hidePoweredBy: PropTypes.bool,
   showWhatsNewLink: PropTypes.bool,
