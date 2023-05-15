@@ -86,8 +86,7 @@ export const SCHEMA = {
         memberid: { type: ["null", "string"] },
         sellerid: { type: ["null", "string"] },
         storeid: { type: ["null", "string"] },
-        firstname: { type: ["null", "string"] },
-        lastname: { type: ["null", "string"] },
+        name: { type: ["null", "string"] },
         avatar: { type: ["null", "string"] },
         token: { type: ["null", "string"] }
       }
@@ -469,7 +468,7 @@ export default class Store extends EventTarget {
 
   clearUserInfo() {
     this.update({ userinfo: {
-      memberid: null, sellerid: null, storeid: null, firstname: null, lastname: null, avatar: null, token: null
+      memberid: null, sellerid: null, storeid: null, name: null, avatar: null, token: null
     } });
   }
 

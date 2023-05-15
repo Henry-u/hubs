@@ -10,6 +10,7 @@ import { RadioInputOption } from "../input/RadioInput";
 import { SelectInputField } from "../input/SelectInputField";
 import { Column } from "../layout/Column";
 import { LegalMessage } from "./LegalMessage";
+import styles from "./SignInModal.scss";
 
 export const SignInStep = {
   bind: "bind",
@@ -202,8 +203,10 @@ export function BindUser({
           <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
         </small>
       </p>
-      {selectStore && <CancelButton preset="cancel" onClick={onCancel} />}
-      <NextButton type="submit" />
+      <div className={styles.buttonGroup}>
+        {selectStore && <CancelButton preset="cancel" onClick={onCancel} />}
+        <NextButton type="submit" />
+      </div>
     </Column>
   );
 }

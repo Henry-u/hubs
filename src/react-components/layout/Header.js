@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FormattedMessage } from "react-intl";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,27 @@ import { Container } from "./Container";
 import { SocialBar } from "../home/SocialBar";
 import { SignInButton } from "../home/SignInButton";
 import { AppLogo } from "../misc/AppLogo";
+import Avatar from 'react-avatar';
+
+export function UserAvatar({userInfo}) {
+  return (
+    userInfo.avatar ? (
+      <div className={styles.avatar}>
+        <img src={userInfo.avatar}/>
+        <span>{userInfo.name}</span>
+      </div>
+    ) : (
+      <div className={styles.avatar}>
+        <Avatar size={30} round="30px" name={userInfo.name} />
+        <span>{userInfo.name}</span>
+      </div>
+    )
+  )
+}
+
+UserAvatar.propTypes = {
+  userInfo: PropTypes.object
+}
 
 export function Header({
   showCloud,
@@ -98,18 +119,16 @@ export function Header({
         </nav>
         <div className={styles.signIn}>
           {isSignedIn ? (
-            <div>
-              <span>
-                <FormattedMessage
-                  id="header.signed-in-as"
-                  defaultMessage="Signed in as {email}"
-                  values={{ email: maskEmail(email) }}
-                />
-              </span>
+            <React.Fragment>
+              {
+                userInfo && userInfo.memberid && (
+                  <UserAvatar userInfo={userInfo}/>
+                )
+              }
               <a href="#" onClick={onSignOut}>
                 <FormattedMessage id="header.sign-out" defaultMessage="Sign Out" />
               </a>
-            </div>
+            </React.Fragment>
           ) : (
             <SignInButton />
           )}

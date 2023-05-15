@@ -78,9 +78,9 @@ export function AuthContextProvider({ children, store }) {
     async (email, password) => {
       const response = await loginMember({account: email, password});
       if (response.success) {
-        const { id, firstname, lastname, avatar, token } = response.data;
+        const { id, name, avatar, token } = response.data;
         store.update({ userinfo: { 
-          memberid: id, firstname, lastname, avatar, token 
+          memberid: id, name, avatar, token 
         } })
         return Promise.resolve();
       } else {
@@ -95,9 +95,9 @@ export function AuthContextProvider({ children, store }) {
     async (email, password) => {
       const response = await loginSeller({account: email, password});
       if (response.success) {
-        const { id, firstname, lastname, avatar, token, stores } = response.data;
+        const { id, name, avatar, token, stores } = response.data;
         store.update({ userinfo: { 
-          memberid: id, firstname, lastname, avatar, token 
+          memberid: id, name, avatar, token 
         } })
         if (stores && stores.length > 0) {
           return Promise.resolve(stores);

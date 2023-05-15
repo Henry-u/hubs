@@ -21,5 +21,5 @@ export enum AAModes {
   MSAA_8X = "MSAA_8X"
 }
 
-export const PRIVACY = "https://www.mozilla.org/en-US/privacy/hubs/";
-export const TERMS = "https://www.mozilla.org/en-US/about/legal/terms/hubs/";
+export const PRIVACY = "https://istudyonline.com.au/privacy";
+export const TERMS = "https://istudyonline.com.au/term";
