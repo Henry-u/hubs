@@ -279,8 +279,10 @@ export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, bindType, p
           <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
         </small>
       </p>
-      <CancelButton preset="cancel" onClick={onCancelHub} />
-      <NextButton type="submit" />
+      <div className={styles.buttonGroup}>
+        <CancelButton preset="cancel" onClick={onCancelHub} />
+        <NextButton type="submit" />
+      </div>
     </Column>
   );
 }
