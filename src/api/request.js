@@ -66,7 +66,7 @@ service.interceptors.response.use(
     if (error.constructor.name !== 'Cancel') {
       return Promise.reject(error);
     }
-    return {};
+    return Promise.reject({});
   }
 )
 

@@ -189,7 +189,7 @@ export function BindUser({
               onChange={onChangePassword}
               placeholder="your password"
             />
-            <p>{message}</p>
+            <p style={{color: 'red'}}>{message}</p>
           </React.Fragment>
         ) : (
           storeOptions && storeOptions.length > 0 && <SelectInputField

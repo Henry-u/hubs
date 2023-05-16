@@ -116,8 +116,11 @@ export function AuthContextProvider({ children, store }) {
     async (storeId) => {
       const response = await findStore({param: storeId});
       if (response.success) {
+        const seller = response.data.stoSellerVo
         store.update({ userinfo: {
           ...store.state.userinfo, 
+          sellerid: seller.id,
+          classroomid: seller.classroomId,
           storeid: storeId 
         } })
         return Promise.resolve();

@@ -6,6 +6,7 @@ import { CloseButton } from "../input/CloseButton";
 import { Button, CancelButton } from "../input/Button";
 import { Column } from "../layout/Column";
 import { TextInputField } from "../input/TextInputField";
+import styles from "./CloseRoomModal.scss";
 
 export function CloseRoomModal({ roomName, onClose, onConfirm }) {
   const [confirmText, setConfirmText] = useState("");
@@ -49,10 +50,12 @@ export function CloseRoomModal({ roomName, onClose, onConfirm }) {
             )
           }
         />
-        <Button preset="accept" onClick={onClickConfirm}>
-          <FormattedMessage id="close-room-modal.confirm" defaultMessage="Yes, Close Room" />
-        </Button>
-        <CancelButton onClick={onClose} />
+        <div className={styles.buttonGroup}>
+          <CancelButton onClick={onClose} />
+          <Button preset="accept" onClick={onClickConfirm}>
+            <FormattedMessage id="close-room-modal.confirm" defaultMessage="Yes, Close Room" />
+          </Button>
+        </div>
       </Column>
     </Modal>
   );

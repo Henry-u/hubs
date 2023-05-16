@@ -5,7 +5,7 @@ import { AVAILABLE_LOCALES, FALLBACK_LOCALES } from "../assets/locales/locale_co
 const defaultLocaleData = {
   "app-name": "App",
   "editor-name": "Scene Editor",
-  "contact-email": "app@company.com",
+  "contact-email": "info@istudyonline.com.au",
   "company-name": "Company",
   "share-hashtag": "#app",
   "app-description": "Gather share and collaborate together in a virtual, private and safe space",

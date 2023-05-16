@@ -118,7 +118,7 @@ class LinkRoot extends Component {
           <div className={styles.linkContents}>
             <a className={styles.logo} href="/">
               <img
-                src={configs.image("logo")}
+                src={configs.image("logo_dark")}
                 alt={<FormattedMessage id="link-page.logo-alt" defaultMessage="Logo" />}
               />
             </a>
@@ -188,11 +188,11 @@ class LinkRoot extends Component {
               </button>
             </div>
 
-            <div className={styles.createLink}>
+            {/* <div className={styles.createLink}>
               <a href="/">
                 <FormattedMessage id="link-page.create-room-button" defaultMessage="Create a new room" />
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </WrappedIntlProvider>

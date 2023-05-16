@@ -322,7 +322,8 @@ export default class Store extends EventTarget {
     if (expiry <= Date.now()) {
       this.update({ 
         credentials: { token: null, email: null },
-        userinfo: { memberid: null, sellerid: null, firstname: null, lastname: null } 
+        userinfo: { memberid: null, sellerid: null, storeid: null, name: null, 
+          avatar: null, classroomid: null,token: null } 
       });
     }
   };
@@ -468,8 +469,13 @@ export default class Store extends EventTarget {
 
   clearUserInfo() {
     this.update({ userinfo: {
-      memberid: null, sellerid: null, storeid: null, name: null, avatar: null, token: null
+      memberid: null, sellerid: null, storeid: null, name: null, 
+      avatar: null, classroomid: null,token: null
     } });
+  }
+
+  updateClassRoomID(id) {
+    this.update({ userinfo: {...this.state.userinfo, classroomid: id} });
   }
 
   get schema() {

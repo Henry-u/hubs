@@ -26,3 +26,30 @@ export function findStore(data) {
     data
   })
 }
+
+// 添加教室
+export function saveClassroomId(data) {
+  return request({
+    url: "/v1/sel/stoseller/saveClassroomId",
+    method: "post",
+    data
+  })
+}
+
+// 删除教室
+export function deleteClassroomId(data) {
+  return request({
+    url: "/v1/sel/stoseller/deleteClassroomId",
+    method: "post",
+    data
+  })
+}
+
+// 更新教室
+export function updateClassroomId(data) {
+  return request({
+    url: "/v1/sel/stoseller/updateClassroomId",
+    method: "post",
+    data
+  })
+}
