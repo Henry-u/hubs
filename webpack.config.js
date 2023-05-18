@@ -349,6 +349,15 @@ module.exports = async (env, argv) => {
         type: "https",
         options: createHTTPSConfig()
       },
+      proxy: {
+        '/app': {
+          target: `https://istudyonline.com.au/api`,
+          changeOrigin: true,
+          pathRewrite: {
+            '^/app': ''
+          }
+        }
+      },      
       host: "0.0.0.0",
       port: 8080,
       allowedHosts: [host, internalHostname],

@@ -23,6 +23,7 @@ export function PageContainer({ children, ...rest }) {
       isAdmin={auth.isAdmin}
       isSignedIn={auth.isSignedIn}
       email={auth.email}
+      userInfo={auth.userInfo}
       onSignOut={auth.signOut}
       hidePoweredBy={configs.feature("hide_powered_by")}
       showWhatsNewLink={configs.feature("show_whats_new_link")}

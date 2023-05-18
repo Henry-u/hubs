@@ -22,6 +22,7 @@ export function Header({
   isAdmin,
   isSignedIn,
   email,
+  userInfo,
   onSignOut,
   isHmc
 }) {
@@ -131,6 +132,7 @@ Header.propTypes = {
   isAdmin: PropTypes.bool,
   isSignedIn: PropTypes.bool,
   email: PropTypes.string,
+  userInfo: PropTypes.object,
   onSignOut: PropTypes.func,
   isHmc: PropTypes.bool
 };

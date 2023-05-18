@@ -79,6 +79,20 @@ export const SCHEMA = {
       }
     },
 
+    userinfo: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        memberid: { type: ["null", "string"] },
+        sellerid: { type: ["null", "string"] },
+        storeid: { type: ["null", "string"] },
+        firstname: { type: ["null", "string"] },
+        lastname: { type: ["null", "string"] },
+        avatar: { type: ["null", "string"] },
+        token: { type: ["null", "string"] }
+      }
+    },
+    
     activity: {
       type: "object",
       additionalProperties: false,
@@ -230,6 +244,7 @@ export const SCHEMA = {
   properties: {
     profile: { $ref: "#/definitions/profile" },
     credentials: { $ref: "#/definitions/credentials" },
+    userinfo: { $ref: "#/definitions/userinfo" },
     activity: { $ref: "#/definitions/activity" },
     settings: { $ref: "#/definitions/settings" },
     preferences: { $ref: "#/definitions/preferences" },
@@ -265,6 +280,7 @@ export default class Store extends EventTarget {
       activity: {},
       settings: {},
       credentials: {},
+      userinfo: {},
       profile: {},
       confirmedDiscordRooms: [],
       confirmedBroadcastedRooms: [],
@@ -305,7 +321,10 @@ export default class Store extends EventTarget {
 
     const expiry = jwtDecode(this.state.credentials.token).exp * 1000;
     if (expiry <= Date.now()) {
-      this.update({ credentials: { token: null, email: null } });
+      this.update({ 
+        credentials: { token: null, email: null },
+        userinfo: { memberid: null, sellerid: null, firstname: null, lastname: null } 
+      });
     }
   };
 
@@ -446,6 +465,12 @@ export default class Store extends EventTarget {
     } else {
       return null;
     }
+  }
+
+  clearUserInfo() {
+    this.update({ userinfo: {
+      memberid: null, sellerid: null, storeid: null, firstname: null, lastname: null, avatar: null, token: null
+    } });
   }
 
   get schema() {
