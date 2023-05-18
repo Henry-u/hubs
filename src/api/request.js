@@ -38,7 +38,6 @@ service.interceptors.request.use(
       config.headers["X-Auth-Token"] = store.state.userinfo.token;
       config.headers["X-Auth-Type"] = "app";
       config.headers["Content-Type"] = "application/json";
-      config.headers["Content-Security-Policy"] = "connect-src 'self' blob: data: https://istudyonline.com.au";
     }
     return config;
   },
