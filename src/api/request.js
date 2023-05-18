@@ -1,9 +1,11 @@
 import axios from "axios";
 import CONFIG from "../config/baseUrl";
 
+const baseURL = 'https://istudyonline.com.au' + CONFIG.baseUrl;
+
 // create an axios instance
 const service = axios.create({
-  baseURL: CONFIG.baseUrl, // url = base url + request url
+  baseURL: baseURL, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 3 * 60 * 1000
 });
@@ -66,7 +68,7 @@ service.interceptors.response.use(
     if (error.constructor.name !== 'Cancel') {
       return Promise.reject(error);
     }
-    return {};
+    return Promise.reject({});
   }
 )
 

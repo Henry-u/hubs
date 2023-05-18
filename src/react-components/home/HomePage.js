@@ -20,6 +20,7 @@ import { SignInButton } from "./SignInButton";
 import { AppLogo } from "../misc/AppLogo";
 import { isHmc } from "../../utils/isHmc";
 import maskEmail from "../../utils/mask-email";
+import { UserAvatar } from "../layout/Header"
 
 export function HomePage() {
   const auth = useContext(AuthContext);
@@ -52,28 +53,29 @@ export function HomePage() {
 
   const canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
   const email = auth.email;
+  const userInfo = auth.userInfo;
   return (
     <PageContainer className={styles.homePage}>
       <Container>
         <div className={styles.hero}>
-          {auth.isSignedIn ? (
-            <div className={styles.signInContainer}>
-              <span>
-                <FormattedMessage
-                  id="header.signed-in-as"
-                  defaultMessage="Signed in as {email}"
-                  values={{ email: maskEmail(email) }}
-                />
-              </span>
-              <a href="#" onClick={auth.signOut} className={styles.mobileSignOut}>
-                <FormattedMessage id="header.sign-out" defaultMessage="Sign Out" />
-              </a>
+          <div className={styles.headerContainer}>
+            <div className={styles.logoContainer}>
+              <AppLogo />
             </div>
-          ) : (
-            <SignInButton mobile />
-          )}
-          <div className={styles.logoContainer}>
-            <AppLogo />
+            {auth.isSignedIn ? (
+              <div className={styles.signInContainer}>
+                {
+                  userInfo && userInfo.memberid && (
+                    <UserAvatar userInfo={userInfo}/>
+                  )
+                }
+                <a href="#" onClick={auth.signOut} className={styles.mobileSignOut}>
+                  <FormattedMessage id="header.sign-out" defaultMessage="Sign Out" />
+                </a>
+              </div>
+            ) : (
+              <SignInButton mobile />
+            )}
           </div>
           <div className={styles.appInfo}>
             <div className={styles.appDescription}>{configs.translation("app-description")}</div>

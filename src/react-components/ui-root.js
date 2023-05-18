@@ -99,6 +99,7 @@ import { TERMS, PRIVACY } from "../constants";
 import { ECSDebugSidebarContainer } from "./debug-panel/ECSSidebar";
 import { NotificationsContainer } from "./room/NotificationsContainer";
 import { usePermissions } from "./room/usePermissions";
+import { deleteClassroomId } from "../api/bindUrl";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -1141,6 +1142,8 @@ class UIRoot extends Component {
                 icon: LeaveIcon,
                 onClick: async () => {
                   await this.props.authChannel.signOut(this.props.hubChannel);
+                  await deleteClassroomId();
+                  this.props.store.clearUserInfo();
                   this.setState({ signedIn: false });
                 }
               }
@@ -1253,6 +1256,8 @@ class UIRoot extends Component {
                     roomName: this.props.hub.name,
                     onConfirm: () => {
                       this.props.hubChannel.closeHub();
+                      this.props.store.updateClassRoomID(null);
+                      deleteClassroomId();
                     }
                   });
                 },

@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import configs from "../../utils/configs";
-import { loginMember, loginSeller, findStore } from "../../api/bindUrl";
+import { loginSeller, findStore } from "../../api/bindUrl";
 
 // TODO: We really shouldn't include these dependencies on every page. A dynamic import would work better.
 import jwtDecode from "jwt-decode";
@@ -60,7 +60,6 @@ export function StorybookAuthContextProvider({ children }) {
     signIn: noop,
     verify: noop,
     signOut: noop,
-    bindMember: noop,
     bindSeller: noop,
     bindStore: noop,
     cancelBind: noop
@@ -74,30 +73,13 @@ StorybookAuthContextProvider.propTypes = {
 };
 
 export function AuthContextProvider({ children, store }) {
-  const bindMember = useCallback(
-    async (email, password) => {
-      const response = await loginMember({account: email, password});
-      if (response.success) {
-        const { id, firstname, lastname, avatar, token } = response.data;
-        store.update({ userinfo: { 
-          memberid: id, firstname, lastname, avatar, token 
-        } })
-        return Promise.resolve();
-      } else {
-        store.clearUserInfo();
-        return Promise.reject(response.message);
-      }
-    },
-    [store]
-  );
-
   const bindSeller = useCallback(
     async (email, password) => {
       const response = await loginSeller({account: email, password});
       if (response.success) {
-        const { id, firstname, lastname, avatar, token, stores } = response.data;
+        const { id, name, avatar, token, stores } = response.data;
         store.update({ userinfo: { 
-          memberid: id, firstname, lastname, avatar, token 
+          memberid: id, name, avatar, token 
         } })
         if (stores && stores.length > 0) {
           return Promise.resolve(stores);
@@ -116,8 +98,11 @@ export function AuthContextProvider({ children, store }) {
     async (storeId) => {
       const response = await findStore({param: storeId});
       if (response.success) {
+        const seller = response.data.stoSellerVo
         store.update({ userinfo: {
           ...store.state.userinfo, 
+          sellerid: seller.id,
+          classroomid: seller.classroomId,
           storeid: storeId 
         } })
         return Promise.resolve();
@@ -176,7 +161,6 @@ export function AuthContextProvider({ children, store }) {
     signIn,
     verify,
     signOut,
-    bindMember,
     bindSeller,
     bindStore,
     cancelBind

@@ -3,6 +3,7 @@ import { generateHubName } from "../utils/name-generation";
 import configs from "../utils/configs";
 import { sleep } from "../utils/async-utils";
 import { store } from "../utils/store-instance";
+import { findStore, saveClassroomId, deleteClassroomId } from "../api/bindUrl";
 
 export function hasReticulumServer() {
   return !!configs.RETICULUM_SERVER;
@@ -201,7 +202,26 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
   return fetchReticulumAuthenticatedWithToken(store.state.credentials.token, url, method, payload);
 }
 
+export async function checkUserToken() {
+  if (store.state.userinfo && store.state.userinfo.storeid && store.state.userinfo.token) {
+    await findStore({param: store.state.userinfo.storeid}).catch(() => {
+      document.location = '/signin';
+      return false;
+    });
+  } else {
+    document.location = '/signin';
+    return false;
+  }
+  return true;
+}
+
 export async function createAndRedirectToNewHub(name, sceneId, replace) {
+  if (!checkUserToken()) return;
+  if (store.state.userinfo.classroomid) {
+    store.updateClassRoomID(null);
+    await deleteClassroomId();
+  }
+
   const createUrl = getReticulumFetchUrl("/api/v1/hubs");
   const payload = { hub: { name: name || generateHubName() } };
 
@@ -235,6 +255,9 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
 
   const hub = res;
   let url = hub.url;
+
+  store.updateClassRoomID(hub.hub_id);
+  await saveClassroomId({param: hub.hub_id});
 
   const creatorAssignmentToken = hub.creator_assignment_token;
   if (creatorAssignmentToken) {

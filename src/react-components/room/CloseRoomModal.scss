@@ -1,0 +1,7 @@
+@use "../styles/theme.scss";
+
+:local(.button-group) {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}

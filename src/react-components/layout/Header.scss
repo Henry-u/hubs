@@ -31,6 +31,9 @@ header {
 
       @media(min-width: theme.$breakpoint-lg) {
         padding-top: 0;
+        &:first-child {
+          padding-top: 0;
+        }
       }
     }
 
@@ -69,14 +72,18 @@ header {
 }
 
 :local(.home-link) {
-  display: inline-block;
-  width: 124px;
- 
+  display: none;
   img {
     max-height: 83px;
     height: 100%;
   }
+
+  @media(min-width: theme.$breakpoint-lg) {
+    display: inline-block;
+    width: 124px;
+  }
 }
+
 :local(.sign-in) {
   display: none;
   flex-direction: column;
@@ -164,5 +171,17 @@ header {
       height:200px;
       justify-content: center;
     }
+  }
+}
+:local(.avatar) {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  padding-right: 20px;
+  >img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
   }
 }

@@ -10,6 +10,7 @@ import { RadioInputOption } from "../input/RadioInput";
 import { SelectInputField } from "../input/SelectInputField";
 import { Column } from "../layout/Column";
 import { LegalMessage } from "./LegalMessage";
+import styles from "./SignInModal.scss";
 
 export const SignInStep = {
   bind: "bind",
@@ -82,31 +83,26 @@ export const SignInMessages = defineMessages({
 });
 
 export function BindUser({ 
-    onBindMember, onBindSeller, onBindStore, onBindCancel,
-    initialEmail, message, bindType, stores, privacyUrl, termsUrl }) {
+    onBindSeller, onBindStore, onBindCancel,
+    initialEmail, message, stores, privacyUrl, termsUrl }) {
   const intl = useIntl();
 
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
-  const [type, setType] = useState(bindType);
   const [storeOptions, setStoreOptions] = useState([]);
   const [storeId, setStoreId] = useState("");
-  const selectStore = (bindType === "1" && stores && stores.length > 0);
+  const selectStore = (stores && stores.length > 0);
 
   const onBindForm = useCallback(
     e => {
       e.preventDefault();
-      if (type === "0") {
-        onBindMember(email, password);
+      if (storeId) {
+        onBindStore(email, storeId);
       } else {
-        if (storeId) {
-          onBindStore(email, storeId);
-        } else {
-          onBindSeller(email, password);
-        }
+        onBindSeller(email, password);
       }
-    },
-    [onBindMember, onBindSeller, onBindStore, email, password, type, storeId]
+   },
+    [onBindSeller, onBindStore, email, password, storeId]
   );
 
   const onChangeEmail = useCallback(
@@ -148,30 +144,14 @@ export function BindUser({
       })
       setStoreOptions([...options]);
     }
-  }, [bindType, stores]);
+  }, [stores]);
 
   return (
     <Column center padding as="form" onSubmit={onBindForm}>
       {
         !selectStore ? (
           <React.Fragment>
-            <p>Please Bind your account As</p>
-            <RadioInputField>
-              <RadioInputOption
-                name="bind_type"
-                value="0"
-                label="Student"
-                onChange={() => setType("0")}
-                checked={type === "0"}
-              />
-              <RadioInputOption
-                name="bind_type"
-                value="1"
-                label="Teacher"
-                onChange={() => setType("1")}
-                checked={type === "1"}
-              />
-            </RadioInputField>
+            <p>Please Bind your account As Teacher</p>
             <TextInputField
               name="email"
               type="email"
@@ -188,7 +168,7 @@ export function BindUser({
               onChange={onChangePassword}
               placeholder="your password"
             />
-            <p>{message}</p>
+            <p style={{color: 'red'}}>{message}</p>
           </React.Fragment>
         ) : (
           storeOptions && storeOptions.length > 0 && <SelectInputField
@@ -202,32 +182,31 @@ export function BindUser({
           <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
         </small>
       </p>
-      {selectStore && <CancelButton preset="cancel" onClick={onCancel} />}
-      <NextButton type="submit" />
+      <div className={styles.buttonGroup}>
+        {selectStore && <CancelButton preset="cancel" onClick={onCancel} />}
+        <NextButton type="submit" />
+      </div>
     </Column>
   );
 }
 
 BindUser.defaultProps = {
-  bindType: "0",
   initialEmail: "",
   message: ""
 };
 
 BindUser.propTypes = {
   message: PropTypes.string,
-  bindType: PropTypes.string,
   stores: PropTypes.array,
   termsUrl: PropTypes.string,
   privacyUrl: PropTypes.string,
   initialEmail: PropTypes.string,
-  onBindMember: PropTypes.func.isRequired,
   onBindSeller: PropTypes.func.isRequired,
   onBindStore: PropTypes.func.isRequired,
   onBindCancel: PropTypes.func.isRequired,
 };
 
-export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, bindType, privacyUrl, termsUrl, message }) {
+export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, privacyUrl, termsUrl, message }) {
   const intl = useIntl();
 
   const [email, setEmail] = useState(initialEmail);
@@ -249,7 +228,7 @@ export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, bindType, p
 
   const onCancelHub = useCallback(
     () => {
-      onCancel(email, bindType);
+      onCancel(email);
     },
     [onCancel]
   );
@@ -276,8 +255,10 @@ export function SubmitEmail({ onSubmitEmail, onCancel, initialEmail, bindType, p
           <LegalMessage termsUrl={termsUrl} privacyUrl={privacyUrl} />
         </small>
       </p>
-      <CancelButton preset="cancel" onClick={onCancelHub} />
-      <NextButton type="submit" />
+      <div className={styles.buttonGroup}>
+        <CancelButton preset="cancel" onClick={onCancelHub} />
+        <NextButton type="submit" />
+      </div>
     </Column>
   );
 }
