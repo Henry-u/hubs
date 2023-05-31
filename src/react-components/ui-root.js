@@ -1159,8 +1159,13 @@ class UIRoot extends Component {
             icon: AddIcon,
             onClick: () =>
               this.showNonHistoriedDialog(LeaveRoomModal, {
-                destinationUrl: "/",
-                reason: LeaveReason.createRoom
+                reason: LeaveReason.createRoom,
+                onConfirm: () => {
+                  this.props.hubChannel.closeHub();
+                  this.props.store.updateClassRoomID(null);
+                  deleteClassroomId();
+                  document.location = "/";
+                }
               })
           },
           !isLockedDownDemo && {

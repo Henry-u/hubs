@@ -204,10 +204,14 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
 
 export async function checkUserToken() {
   if (store.state.userinfo && store.state.userinfo.storeid && store.state.userinfo.token) {
-    await findStore({param: store.state.userinfo.storeid}).catch(() => {
+    const response = await findStore({param: store.state.userinfo.storeid}).catch(() => {
       document.location = '/signin';
       return false;
     });
+    if (response.success) {
+      const seller = response.data.stoSellerVo
+      store.updateClassRoomID(seller.classroomId);
+    }
   } else {
     document.location = '/signin';
     return false;
@@ -216,10 +220,12 @@ export async function checkUserToken() {
 }
 
 export async function createAndRedirectToNewHub(name, sceneId, replace) {
-  if (!checkUserToken()) return;
+  if (!await checkUserToken()) return;
   if (store.state.userinfo.classroomid) {
-    store.updateClassRoomID(null);
-    await deleteClassroomId();
+    document.location = "/" + store.state.userinfo.classroomid;
+    return;
+    // store.updateClassRoomID(null);
+    // await deleteClassroomId();
   }
 
   const createUrl = getReticulumFetchUrl("/api/v1/hubs");

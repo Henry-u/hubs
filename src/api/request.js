@@ -1,6 +1,7 @@
 import axios from "axios";
 import CONFIG from "../config/baseUrl";
 
+// const baseURL = CONFIG.baseUrl;
 const baseURL = 'https://istudyonline.com.au' + CONFIG.baseUrl;
 
 // create an axios instance

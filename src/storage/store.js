@@ -88,6 +88,7 @@ export const SCHEMA = {
         storeid: { type: ["null", "string"] },
         name: { type: ["null", "string"] },
         avatar: { type: ["null", "string"] },
+        classroomid: { type: ["null", "string"] },
         token: { type: ["null", "string"] }
       }
     },

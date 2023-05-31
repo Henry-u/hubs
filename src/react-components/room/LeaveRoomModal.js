@@ -42,7 +42,7 @@ const confirmationMessages = defineMessages({
   }
 });
 
-export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
+export function LeaveRoomModal({ reason, destinationUrl, onClose, onConfirm }) {
   const intl = useIntl();
 
   return (
@@ -52,9 +52,19 @@ export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
     >
       <Column padding center centerMd="both" grow>
         <p>{intl.formatMessage(reasonMessages[reason])}</p>
-        <Button as="a" preset="cancel" href={destinationUrl} rel="noopener noreferrer">
-          {intl.formatMessage(confirmationMessages[reason])}
-        </Button>
+        {
+          onConfirm ? 
+          (
+            <Button preset="cancel" onClick={onConfirm}>
+              {intl.formatMessage(confirmationMessages[reason])}
+            </Button>
+          ) :
+          (
+            <Button as="a" preset="cancel" href={destinationUrl} rel="noopener noreferrer">
+              {intl.formatMessage(confirmationMessages[reason])}
+            </Button>
+          )
+        }
       </Column>
     </Modal>
   );
@@ -63,5 +73,6 @@ export function LeaveRoomModal({ reason, destinationUrl, onClose }) {
 LeaveRoomModal.propTypes = {
   reason: PropTypes.string,
   destinationUrl: PropTypes.string,
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
+  onConfirm: PropTypes.func
 };
