@@ -20,7 +20,8 @@ import {
   sluglessPath
 } from "../utils/history";
 import StateRoute from "./state-route.js";
-import { getPresenceProfileForSession, hubUrl } from "../utils/phoenix-utils";
+import { getPresenceProfileForSession, hubUrl, createAndRedirectToNewHub } from "../utils/phoenix-utils";
+
 import { getMicrophonePresences } from "../utils/microphone-presence";
 import { getCurrentStreamer } from "../utils/component-utils";
 import { isIOS } from "../utils/is-mobile";
@@ -1142,9 +1143,9 @@ class UIRoot extends Component {
                 icon: LeaveIcon,
                 onClick: async () => {
                   await this.props.authChannel.signOut(this.props.hubChannel);
-                  await deleteClassroomId();
                   this.props.store.clearUserInfo();
                   this.setState({ signedIn: false });
+                  document.location = "/";
                 }
               }
             : {
@@ -1160,11 +1161,11 @@ class UIRoot extends Component {
             onClick: () =>
               this.showNonHistoriedDialog(LeaveRoomModal, {
                 reason: LeaveReason.createRoom,
-                onConfirm: () => {
+                onConfirm: async () => {
+                  await deleteClassroomId({param: this.props.hub.hub_id});
                   this.props.hubChannel.closeHub();
                   this.props.store.updateClassRoomID(null);
-                  deleteClassroomId();
-                  document.location = "/";
+                  createAndRedirectToNewHub(null, null, false);
                 }
               })
           },
@@ -1260,9 +1261,9 @@ class UIRoot extends Component {
                   this.showNonHistoriedDialog(CloseRoomModal, {
                     roomName: this.props.hub.name,
                     onConfirm: () => {
+                      deleteClassroomId({param: this.props.hub.hub_id});
                       this.props.hubChannel.closeHub();
                       this.props.store.updateClassRoomID(null);
-                      deleteClassroomId();
                     }
                   });
                 },

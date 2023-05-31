@@ -23,7 +23,7 @@ const reasonMessages = defineMessages({
   },
   [LeaveReason.createRoom]: {
     id: "leave-room-modal.create-room.message",
-    defaultMessage: "Creating a new room will leave this one. Are you sure?"
+    defaultMessage: "Creating a new room will close this one. Are you sure?"
   }
 });
 

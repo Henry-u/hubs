@@ -35,12 +35,3 @@ export function deleteClassroomId(data) {
     data
   })
 }
-
-// 更新教室
-export function updateClassroomId(data) {
-  return request({
-    url: "/v1/sel/stoseller/updateClassroomId",
-    method: "post",
-    data
-  })
-}
