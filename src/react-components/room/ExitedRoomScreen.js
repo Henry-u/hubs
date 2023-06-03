@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { defineMessages, FormattedMessage, useIntl } from "react-intl";
 import { LoadingScreenLayout } from "../layout/LoadingScreenLayout";
 import { Button } from "../input/Button";
+import { deleteClassroomId } from "../../api/bindUrl";
 
 export const ExitReason = {
   exited: "exited",
@@ -106,7 +107,13 @@ export function ExitedRoomScreen({ reason, showTerms, termsUrl, showSourceLink }
           </p>
         )}
 
-        <Button as="a" preset="accept" href="/">
+        <Button preset="accept" onClick={async() => {
+          var url = document.location.toString();
+          var hub = url.split("/");
+          var hub_id = hub[hub.length - 1];
+          await deleteClassroomId({param: hub_id});
+          window.Location = "/";
+        }}>
           <FormattedMessage id="exited-room-screen.home-button" defaultMessage="Back to Home" />
         </Button>
       </>
