@@ -112,7 +112,7 @@ export function ExitedRoomScreen({ reason, showTerms, termsUrl, showSourceLink }
           var hub = url.split("/");
           var hub_id = hub[hub.length - 1];
           await deleteClassroomId({param: hub_id});
-          window.Location = "/";
+          window.location = "/";
         }}>
           <FormattedMessage id="exited-room-screen.home-button" defaultMessage="Back to Home" />
         </Button>
