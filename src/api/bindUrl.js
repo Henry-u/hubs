@@ -1,5 +1,14 @@
 import request from "./request";
 
+// 学生登录
+export function loginMember(data) {
+  return request({
+    url: "/v1/mem/memmember/login",
+    method: "post",
+    data
+  })
+}
+
 // 机构登录
 export function loginSeller(data) {
   return request({
@@ -31,6 +40,30 @@ export function saveClassroomId(data) {
 export function deleteClassroomId(data) {
   return request({
     url: "/v1/sel/stoseller/deleteClassroomId",
+    method: "post",
+    data
+  })
+}
+
+export function checkCloudPlan(data) {
+  return request({
+    url: "/v1/prd/cloudplan/findCloudPlanMember",
+    method: "post",
+    data
+  })
+}
+
+export function saveCloudRoom(data) {
+  return request({
+    url: "/v1/prd/cloudroom/saveCloudRoom",
+    method: "post",
+    data
+  })
+}
+
+export function closeCloudRoom(data) {
+  return request({
+    url: "/v1/prd/cloudroom/closeCloudRoom",
     method: "post",
     data
   })

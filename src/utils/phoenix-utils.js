@@ -3,7 +3,7 @@ import { generateHubName } from "../utils/name-generation";
 import configs from "../utils/configs";
 import { sleep } from "../utils/async-utils";
 import { store } from "../utils/store-instance";
-import { findStore, saveClassroomId, deleteClassroomId } from "../api/bindUrl";
+import { findStore, saveClassroomId, saveCloudRoom, checkCloudPlan } from "../api/bindUrl";
 
 export function hasReticulumServer() {
   return !!configs.RETICULUM_SERVER;
@@ -203,7 +203,31 @@ export function fetchReticulumAuthenticated(url, method = "GET", payload) {
 }
 
 export async function checkUserToken() {
-  if (store.state.userinfo && store.state.userinfo.storeid && store.state.userinfo.token) {
+  if (!store.state.userinfo) {
+    document.location = '/signin';
+    return false;
+  }
+
+  if (store.state.userinfo.bindtype === "0" && store.state.userinfo.memberid && store.state.userinfo.token) {
+    const response = await checkCloudPlan({}).catch(() => {
+      document.location = '/signin';
+      return false;
+    })
+    if (response.success) {
+      var subscription = null;
+      if (response.data) {
+        subscription = response.data.valid;
+      }
+      store.update({ userinfo: {
+        ...store.state.userinfo, 
+        subscription,
+        classroomid: null} 
+      })
+      if (subscription !== 1) {
+        return false; 
+      }
+    }
+  } else if (store.state.userinfo.bindtype === "1" && store.state.userinfo.storeid && store.state.userinfo.token) {
     const response = await findStore({param: store.state.userinfo.storeid}).catch(() => {
       document.location = '/signin';
       return false;
@@ -263,7 +287,11 @@ export async function createAndRedirectToNewHub(name, sceneId, replace) {
   let url = hub.url;
 
   store.updateClassRoomID(hub.hub_id);
-  await saveClassroomId({param: hub.hub_id});
+  if (store.state.userinfo.bindtype === '0') {
+    await saveCloudRoom({param: hub.hub_id});
+  } else {
+    await saveClassroomId({param: hub.hub_id});
+  }
 
   const creatorAssignmentToken = hub.creator_assignment_token;
   if (creatorAssignmentToken) {

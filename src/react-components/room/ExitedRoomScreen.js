@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { defineMessages, FormattedMessage, useIntl } from "react-intl";
 import { LoadingScreenLayout } from "../layout/LoadingScreenLayout";
 import { Button } from "../input/Button";
-import { deleteClassroomId } from "../../api/bindUrl";
+import { deleteClassroomId, closeCloudRoom } from "../../api/bindUrl";
 
 export const ExitReason = {
   exited: "exited",
@@ -56,7 +56,7 @@ const messages = defineMessages({
   }
 });
 
-export function ExitedRoomScreen({ reason, showTerms, termsUrl, showSourceLink }) {
+export function ExitedRoomScreen({ store, reason, showTerms, termsUrl, showSourceLink }) {
   const intl = useIntl();
 
   let subtitle = null;
@@ -111,7 +111,13 @@ export function ExitedRoomScreen({ reason, showTerms, termsUrl, showSourceLink }
           var url = document.location.toString();
           var hub = url.split("/");
           var hub_id = hub[hub.length - 1];
-          await deleteClassroomId({param: hub_id});
+          if (store && store.state.userinfo) {
+            if (store.state.userinfo.bindtype === '0') {
+              await closeCloudRoom({param: hub_id});
+            } else {
+              await deleteClassroomId({param: hub_id});
+            }
+          }
           window.location = "/";
         }}>
           <FormattedMessage id="exited-room-screen.home-button" defaultMessage="Back to Home" />
@@ -167,5 +173,6 @@ ExitedRoomScreen.propTypes = {
   reason: PropTypes.string.isRequired,
   showTerms: PropTypes.bool,
   termsUrl: PropTypes.string,
-  showSourceLink: PropTypes.bool
+  showSourceLink: PropTypes.bool,
+  store: PropTypes.object,
 };

@@ -100,7 +100,7 @@ import { TERMS, PRIVACY } from "../constants";
 import { ECSDebugSidebarContainer } from "./debug-panel/ECSSidebar";
 import { NotificationsContainer } from "./room/NotificationsContainer";
 import { usePermissions } from "./room/usePermissions";
-import { deleteClassroomId } from "../api/bindUrl";
+import { deleteClassroomId, closeCloudRoom } from "../api/bindUrl";
 
 const avatarEditorDebug = qsTruthy("avatarEditorDebug");
 
@@ -1119,7 +1119,8 @@ class UIRoot extends Component {
 
     const renderEntryFlow = (!enteredOrWatching && this.props.hub) || this.isWaitingForAutoExit();
 
-    const canCreateRoom = !configs.feature("disable_room_creation") || configs.isAdmin();
+    const canCreateRoom = (!configs.feature("disable_room_creation") || configs.isAdmin()) 
+          && (!this.props.store.userinfo || !this.props.store.userinfo.bindtype != '0' || this.props.store.userinfo.subscription == 1);
     const canCloseRoom = this.props.hubChannel && !!this.props.hubChannel.canOrWillIfCreator("close_hub");
     const isModerator = this.props.hubChannel && this.props.hubChannel.canOrWillIfCreator("kick_users") && !isMobileVR;
 
@@ -1162,7 +1163,13 @@ class UIRoot extends Component {
               this.showNonHistoriedDialog(LeaveRoomModal, {
                 reason: LeaveReason.createRoom,
                 onConfirm: async () => {
-                  await deleteClassroomId({param: this.props.hub.hub_id});
+                  if (this.props.store.state.userinfo) {
+                    if (this.props.store.state.userinfo.bindtype === '0') {
+                      await closeCloudRoom({param: this.props.hub.hub_id});
+                    } else {
+                      await deleteClassroomId({param: this.props.hub.hub_id});
+                    }
+                  }
                   this.props.hubChannel.closeHub();
                   this.props.store.updateClassRoomID(null);
                   createAndRedirectToNewHub(null, null, false);
@@ -1260,8 +1267,14 @@ class UIRoot extends Component {
                 () => {
                   this.showNonHistoriedDialog(CloseRoomModal, {
                     roomName: this.props.hub.name,
-                    onConfirm: () => {
-                      deleteClassroomId({param: this.props.hub.hub_id});
+                    onConfirm: async () => {
+                      if (this.props.store.state.userinfo) {
+                        if (this.props.store.state.userinfo.bindtype === '0') {
+                          await closeCloudRoom({param: this.props.hub.hub_id});
+                        } else {
+                          await deleteClassroomId({param: this.props.hub.hub_id});
+                        }
+                      }
                       this.props.hubChannel.closeHub();
                       this.props.store.updateClassRoomID(null);
                     }

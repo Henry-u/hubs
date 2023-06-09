@@ -83,13 +83,15 @@ export const SCHEMA = {
       type: "object",
       additionalProperties: false,
       properties: {
+        bindtype: { type: ["null", "string"] },
         memberid: { type: ["null", "string"] },
         sellerid: { type: ["null", "string"] },
         storeid: { type: ["null", "string"] },
         name: { type: ["null", "string"] },
         avatar: { type: ["null", "string"] },
         classroomid: { type: ["null", "string"] },
-        token: { type: ["null", "string"] }
+        subscription: { type: "number" },
+        token: { type: ["null", "string"] },
       }
     },
     
@@ -323,8 +325,8 @@ export default class Store extends EventTarget {
     if (expiry <= Date.now()) {
       this.update({ 
         credentials: { token: null, email: null },
-        userinfo: { memberid: null, sellerid: null, storeid: null, name: null, 
-          avatar: null, classroomid: null,token: null } 
+        userinfo: { bindtype: null, memberid: null, sellerid: null, storeid: null, name: null, 
+          avatar: null, classroomid: null, subscription: null, token: null } 
       });
     }
   };
@@ -470,8 +472,8 @@ export default class Store extends EventTarget {
 
   clearUserInfo() {
     this.update({ userinfo: {
-      memberid: null, sellerid: null, storeid: null, name: null, 
-      avatar: null, classroomid: null,token: null
+      bindtype: null, memberid: null, sellerid: null, storeid: null, name: null, 
+      avatar: null, classroomid: null, subscription: null, token: null
     } });
   }
 

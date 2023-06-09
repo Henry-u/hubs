@@ -4,7 +4,7 @@ import configs from "../../utils/configs";
 import { ExitedRoomScreen } from "./ExitedRoomScreen";
 import { TERMS } from "../../constants";
 
-export function ExitedRoomScreenContainer({ reason }) {
+export function ExitedRoomScreenContainer({ store, reason }) {
   return (
     <ExitedRoomScreen
       showTerms={configs.feature("show_terms")}
@@ -12,10 +12,12 @@ export function ExitedRoomScreenContainer({ reason }) {
       showSourceLink={configs.feature("show_source_link")}
       reason={reason}
       contactEmail={configs.translation("contact-email")}
+      store={store}
     />
   );
 }
 
 ExitedRoomScreenContainer.propTypes = {
-  reason: PropTypes.string.isRequired
+  reason: PropTypes.string.isRequired,
+  store: PropTypes.object,
 };

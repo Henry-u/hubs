@@ -353,7 +353,9 @@ function mountUI(props = {}) {
               props.showOAuthScreen ? (
                 <OAuthScreenContainer oauthInfo={props.oauthInfo} />
               ) : props.roomUnavailableReason ? (
-                <ExitedRoomScreenContainer reason={props.roomUnavailableReason} />
+                <ExitedRoomScreenContainer 
+                  store={store}
+                  reason={props.roomUnavailableReason} />
               ) : (
                 <UIRoot
                   {...{

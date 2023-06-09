@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import classNames from "classnames";
 import configs from "../../utils/configs";
@@ -51,7 +51,14 @@ export function HomePage() {
     }
   }, []);
 
-  const canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
+  useEffect(() => {
+    if (auth.userInfo && auth.userInfo.bindtype === '0' && auth.userInfo.subscription != 1) {
+      setCanCreateRooms(false);
+    }
+  }, [auth.userInfo]);
+
+  const [canCreateRooms, setCanCreateRooms] = useState(!configs.feature("disable_room_creation") || auth.isAdmin);
+  // const canCreateRooms = !configs.feature("disable_room_creation") || auth.isAdmin;
   const email = auth.email;
   const userInfo = auth.userInfo;
   return (
