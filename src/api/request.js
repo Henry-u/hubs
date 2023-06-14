@@ -1,5 +1,6 @@
 import axios from "axios";
 import CONFIG from "../config/baseUrl";
+import { store } from "../utils/store-instance";
 
 // const baseURL = CONFIG.baseUrl;
 const baseURL = 'https://istudyonline.com.au' + CONFIG.baseUrl;
@@ -33,7 +34,6 @@ service.interceptors.request.use(
       // 标识请求地址&请求方式拼接的字符
       pending.push({ u: config.url + "&" + JSON.stringify(config.data), f: c });
     });
-    const store = window.APP.store;
     console.log("store.userinfo", store.state.userinfo)
     if (store.state.userinfo && store.state.userinfo.token) {
       config.headers["X-Auth-Token"] = store.state.userinfo.token;
